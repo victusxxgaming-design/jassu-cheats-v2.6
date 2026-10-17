@@ -1,7 +1,8 @@
 import { Link, useNavigate } from "@tanstack/react-router";
-import { useEffect, useRef, useState, type ReactNode } from "react";
-import { Search, ShoppingBag, User, Shield, Menu, X, Monitor, Apple, Boxes, MessageCircle, Star } from "lucide-react";
+import { Fragment, useEffect, useRef, useState, type ReactNode } from "react";
+import { Search, ShoppingBag, User, Shield, Menu, X, Monitor, Apple, Boxes, MessageCircle, Star, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useCart } from "@/lib/cart";
 import { useAuth } from "@/lib/auth";
 import { platformLabel, money, type Product, type Platform } from "@/lib/data";
@@ -26,6 +27,12 @@ const NAV = [
   { label: "iOS", platform: "ios" },
 ] as const;
 
+/** Secondary pages reachable from the header on every screen size. */
+const INFO = [
+  { group: "Company", items: [{ to: "/about", label: "About" }, { to: "/contact", label: "Contact" }, { to: "/faq", label: "FAQ" }] },
+  { group: "Legal", items: [{ to: "/terms", label: "Terms" }, { to: "/privacy", label: "Privacy" }, { to: "/refund", label: "Refunds" }] },
+] as const;
+
 export function Header() {
   const { items } = useCart();
   const { user, signOut, isAdmin } = useAuth();
@@ -39,10 +46,29 @@ export function Header() {
         <nav className="hidden md:flex items-center gap-1">
           {NAV.map((n) => (
             <Link key={n.label} to="/store" search={n.platform ? { platform: n.platform } : {}}
-              className="rounded-md px-3 py-2 font-display text-sm font-semibold uppercase tracking-wider text-muted-foreground transition-colors hover:text-foreground [&.active]:text-primary-glow">
+              className="nav-link rounded-md px-3 py-2 font-display text-sm font-semibold uppercase tracking-wider text-muted-foreground transition-colors hover:text-foreground [&.active]:text-primary-glow">
               {n.label}
             </Link>
           ))}
+          <DropdownMenu>
+            <DropdownMenuTrigger className="nav-link group/info flex items-center gap-1 rounded-md px-3 py-2 font-display text-sm font-semibold uppercase tracking-wider text-muted-foreground transition-colors hover:text-foreground data-[state=open]:text-primary-glow">
+              More
+              <ChevronDown className="h-3.5 w-3.5 transition-transform duration-200 group-data-[state=open]/info:rotate-180" />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="min-w-52">
+              {INFO.map((g, gi) => (
+                <Fragment key={g.group}>
+                  {gi > 0 && <DropdownMenuSeparator />}
+                  <DropdownMenuLabel>{g.group}</DropdownMenuLabel>
+                  {g.items.map((i) => (
+                    <DropdownMenuItem asChild key={i.label}>
+                      <Link to={i.to}>{i.label}</Link>
+                    </DropdownMenuItem>
+                  ))}
+                </Fragment>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
         </nav>
         <form className="ml-auto hidden lg:flex items-center gap-2 rounded-lg border bg-surface px-3 h-10 w-72 focus-within:ring-1 focus-within:ring-ring"
           onSubmit={(e) => { e.preventDefault(); nav({ to: "/store", search: { q } }); }}>
@@ -67,6 +93,14 @@ export function Header() {
           <div className="container-x py-4 grid gap-1 border-t">
             {NAV.map((n) => (
               <Link key={n.label} to="/store" search={n.platform ? { platform: n.platform } : {}} onClick={() => setOpen(false)} className="rounded-lg px-3 py-3 text-sm hover:bg-surface">{n.label}</Link>
+            ))}
+            {INFO.map((g, gi) => (
+              <Fragment key={g.group}>
+                <p className={cn("eyebrow px-3 pt-4", gi === 0 && "pt-2")}>{g.group}</p>
+                {g.items.map((i) => (
+                  <Link key={i.label} to={i.to} onClick={() => setOpen(false)} className="rounded-lg px-3 py-3 text-sm hover:bg-surface">{i.label}</Link>
+                ))}
+              </Fragment>
             ))}
             {user ? (
               <>
