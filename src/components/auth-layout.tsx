@@ -16,7 +16,7 @@ export function AuthLayout({ title, sub, children, discord = true }: { title: st
       </div>
       <div className="flex flex-col px-6 py-8">
         <Logo />
-        <div className="m-auto w-full max-w-sm py-12">
+        <div className="auth-content m-auto w-full max-w-sm py-12">
           <h1 className="text-3xl font-semibold">{title}</h1>
           <p className="mt-2 text-sm text-muted-foreground">{sub}</p>
           <div className="mt-8" />

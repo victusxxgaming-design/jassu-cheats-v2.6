@@ -143,3 +143,45 @@
   background-image: radial-gradient(circle at 20% 110%, oklch(0.62 0.23 32 / 0.25), transparent 45%), radial-gradient(circle at 85% 100%, oklch(0.8 0.17 75 / 0.12), transparent 40%);
 }
 @utility clip-angled { clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px)); }
+
+/* Shared motion remains compositor-friendly and never blocks navigation. */
+:root {
+  --motion-fast: 180ms;
+  --motion-standard: 320ms;
+  --motion-ease: cubic-bezier(.22, 1, .36, 1);
+}
+.site-motion { animation: page-enter 420ms var(--motion-ease); }
+.site-motion header { view-transition-name: site-header; }
+.site-motion footer { view-transition-name: site-footer; }
+.site-motion main, .site-motion .auth-content { view-transition-name: page-content; }
+::view-transition-old(root), ::view-transition-new(root) { animation-duration: var(--motion-standard); }
+::view-transition-old(page-content) { animation: page-leave 180ms ease-in both; }
+::view-transition-new(page-content) { animation: page-enter 380ms var(--motion-ease) both; }
+::view-transition-old(site-header), ::view-transition-new(site-header),
+::view-transition-old(site-footer), ::view-transition-new(site-footer) { animation: none; }
+@keyframes page-enter { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes page-leave { to { opacity: 0; transform: translateY(-8px); } }
+@keyframes icon-enter { from { opacity: 0; transform: rotate(-35deg) scale(.8); } to { opacity: 1; transform: rotate(0) scale(1); } }
+.menu-icon { display: flex; animation: icon-enter var(--motion-fast) var(--motion-ease); }
+.mobile-navigation { display: grid; grid-template-rows: 0fr; opacity: 0; visibility: hidden; transition: grid-template-rows var(--motion-standard) var(--motion-ease), opacity var(--motion-fast), visibility var(--motion-standard); }
+.mobile-navigation[data-open="true"] { grid-template-rows: 1fr; opacity: 1; visibility: visible; }
+@media (min-width: 768px) { .mobile-navigation { display: none; } }
+.site-motion :is(button, a, input, select, textarea) {
+  transition-property: color, background-color, border-color, box-shadow, opacity, transform, filter;
+  transition-duration: var(--motion-fast);
+  transition-timing-function: var(--motion-ease);
+}
+.site-motion .motion-control:active:not(:disabled), .site-motion button:active:not(:disabled) { transform: scale(.97); }
+.site-motion :is([role="tabpanel"], [role="menu"], [role="alert"]) { animation: page-enter var(--motion-standard) var(--motion-ease); }
+.site-motion [role="tabpanel"][hidden] { animation: none; }
+.site-motion :is([role="menuitem"], footer a):hover { transform: translateX(3px); }
+.site-motion .surface { transition: border-color var(--motion-standard), box-shadow var(--motion-standard), transform var(--motion-standard) var(--motion-ease); }
+@media (hover: hover) {
+  .site-motion .motion-control:hover:not(:disabled) { transform: translateY(-2px); }
+  .site-motion header nav a:hover { transform: translateY(-2px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
+  ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; }
+  .site-motion .motion-control, .site-motion button, .site-motion footer a, .site-motion header nav a, .panel-hover { transform: none !important; }
+}
