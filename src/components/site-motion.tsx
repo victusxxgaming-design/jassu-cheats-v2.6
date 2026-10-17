@@ -55,5 +55,12 @@ export function SiteMotion({ children }: { children: ReactNode }) {
     preference.addEventListener("change", start);
     return () => { stop(); preference.removeEventListener("change", start); };
   }, [location]);
-  return <div ref={root} className="site-motion">{children}</div>;
+  return (
+    <div ref={root} className="site-motion">
+      {children}
+      <div key={location} className="page-wipe" aria-hidden="true">
+        <span className="page-wipe-glow" />
+      </div>
+    </div>
+  );
 }
