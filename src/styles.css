@@ -162,40 +162,6 @@
 @keyframes page-enter { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes page-leave { to { opacity: 0; transform: translateY(-8px); } }
 
-/* Full-page wipe that sweeps across the screen on every route change */
-.page-wipe {
-  position: fixed;
-  inset: 0;
-  z-index: 90;
-  pointer-events: none;
-  background: linear-gradient(105deg, #0b0b10 0%, #141019 55%, #1c0a0e 100%);
-  transform: scaleX(0);
-  transform-origin: left center;
-  animation: page-wipe-sweep 900ms cubic-bezier(.76,0,.24,1) both;
-}
-.page-wipe-glow {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  right: -2px;
-  width: 3px;
-  background: linear-gradient(180deg, transparent, #ff2d2d 30%, #ff6b6b 50%, #ff2d2d 70%, transparent);
-  box-shadow: 0 0 24px 4px rgba(255, 45, 45, .55);
-  animation: page-wipe-glow 900ms cubic-bezier(.76,0,.24,1) both;
-}
-@keyframes page-wipe-sweep {
-  0% { transform: scaleX(0); transform-origin: left center; }
-  45% { transform: scaleX(1); transform-origin: left center; }
-  55% { transform: scaleX(1); transform-origin: right center; }
-  100% { transform: scaleX(0); transform-origin: right center; }
-}
-@keyframes page-wipe-glow {
-  0%, 100% { opacity: 0; }
-  20%, 80% { opacity: 1; }
-}
-@media (prefers-reduced-motion: reduce) {
-  .page-wipe, .page-wipe-glow { display: none; }
-}
 @keyframes icon-enter { from { opacity: 0; transform: rotate(-35deg) scale(.8); } to { opacity: 1; transform: rotate(0) scale(1); } }
 .menu-icon { display: flex; animation: icon-enter var(--motion-fast) var(--motion-ease); }
 .nav-link { position: relative; }

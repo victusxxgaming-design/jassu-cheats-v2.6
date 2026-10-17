@@ -5,11 +5,14 @@ const dims = new WeakMap<HTMLDivElement, HTMLDivElement>();
 
 let curtain: HTMLDivElement | null = null;
 
-export function morphToPage(origin: HTMLElement, title: string, go: () => void): void {
-  if (curtain) return; // a morph is already running
+let running = false;
+
+export function morphToPage(origin: HTMLElement, title: string, go: () => void, subtitle = "Opening category"): void {
+  if (curtain || running) return; // a morph is already running
   if (typeof window === "undefined") { go(); return; }
   if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) { go(); return; }
 
+  running = true;
   const r = origin.getBoundingClientRect();
   const vw = window.innerWidth;
   const vh = window.innerHeight;
@@ -30,10 +33,10 @@ export function morphToPage(origin: HTMLElement, title: string, go: () => void):
     <div class="grid-lines" style="position:absolute;inset:0;opacity:0.5"></div>
     <div data-morph-content style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;text-align:center;color:var(--foreground)">
       <span style="display:grid;place-items:center;width:76px;height:76px;border-radius:22px;border:1px solid color-mix(in oklab, var(--primary) 45%, transparent);background:color-mix(in oklab, var(--background) 60%, transparent);backdrop-filter:blur(6px)">
-        ${iconSvg.replace("<svg", '<svg style="width:34px;height:34px;color:var(--primary-glow)"')}
+        ${iconSvg ? iconSvg.replace("<svg", '<svg style="width:34px;height:34px;color:var(--primary-glow)"') : '<span style="font-family:\'Chakra Petch\',sans-serif;font-weight:700;font-size:1.6rem;color:var(--primary-glow)">JC</span>'}
       </span>
       <span style="font-family:'Chakra Petch',sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;font-size:clamp(1.7rem, 4.5vw, 3.2rem);line-height:1.05">${title}</span>
-      <span style="font-size:0.75rem;letter-spacing:0.35em;text-transform:uppercase;opacity:0.7">Opening category</span>
+      <span style="font-size:0.75rem;letter-spacing:0.35em;text-transform:uppercase;opacity:0.7">${subtitle}</span>
     </div>`;
   document.body.appendChild(el);
 
@@ -64,6 +67,7 @@ export function morphToPage(origin: HTMLElement, title: string, go: () => void):
     el.style.height = `${vh}px`;
     el.style.borderRadius = "0px";
     curtain = el;
+    running = false;
     go();
     // Safety valve: never leave the curtain stuck on screen
     window.setTimeout(() => consumeMorph(), 1600);
@@ -71,6 +75,11 @@ export function morphToPage(origin: HTMLElement, title: string, go: () => void):
 }
 
 /** Fades out a pending curtain. Returns true when one existed. */
+/** Escapes text before it is placed in the curtain markup. */
+export function morphLabel(text: string): string {
+  return text.replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
+}
+
 export function consumeMorph(holdMs = 100): boolean {
   const el = curtain;
   if (!el) return false;
