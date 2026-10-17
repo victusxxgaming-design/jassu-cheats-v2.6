@@ -171,7 +171,7 @@
   background: linear-gradient(105deg, #0b0b10 0%, #141019 55%, #1c0a0e 100%);
   transform: scaleX(0);
   transform-origin: left center;
-  animation: page-wipe-sweep 760ms cubic-bezier(.76,0,.24,1) both;
+  animation: page-wipe-sweep 900ms cubic-bezier(.76,0,.24,1) both;
 }
 .page-wipe-glow {
   position: absolute;
