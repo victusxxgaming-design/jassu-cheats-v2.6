@@ -171,7 +171,7 @@
   background: linear-gradient(105deg, #0b0b10 0%, #141019 55%, #1c0a0e 100%);
   transform: scaleX(0);
   transform-origin: left center;
-  animation: page-wipe-sweep 760ms cubic-bezier(.76,0,.24,1) both;
+  animation: page-wipe-sweep 900ms cubic-bezier(.76,0,.24,1) both;
 }
 .page-wipe-glow {
   position: absolute;
@@ -181,7 +181,7 @@
   width: 3px;
   background: linear-gradient(180deg, transparent, #ff2d2d 30%, #ff6b6b 50%, #ff2d2d 70%, transparent);
   box-shadow: 0 0 24px 4px rgba(255, 45, 45, .55);
-  animation: page-wipe-glow 760ms cubic-bezier(.76,0,.24,1) both;
+  animation: page-wipe-glow 900ms cubic-bezier(.76,0,.24,1) both;
 }
 @keyframes page-wipe-sweep {
   0% { transform: scaleX(0); transform-origin: left center; }
