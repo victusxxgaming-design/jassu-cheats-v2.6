@@ -32,7 +32,6 @@ export function SiteMotion({ children }: { children: ReactNode }) {
       if (url.pathname === window.location.pathname && url.search === window.location.search && url.hash) return;
       if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
       event.preventDefault();
-      event.stopPropagation();
       const origin = (link.closest("[role='menuitem']") as HTMLElement | null) ?? link;
       morphToPage(origin, morphLabel(morphTitle(link, url)), () => { void router.navigate({ href }); }, "Loading");
     };
