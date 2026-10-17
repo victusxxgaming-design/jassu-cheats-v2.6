@@ -59,12 +59,12 @@ export function Header() {
               {items.length > 0 && <span className="absolute -right-0.5 -top-0.5 grid h-4 min-w-4 place-items-center rounded-full bg-primary px-1 text-[10px] font-bold text-primary-foreground">{items.length}</span>}
             </Link>
           </Button>
-          <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setOpen(!open)} aria-label="Menu">{open ? <X /> : <Menu />}</Button>
+          <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setOpen(!open)} aria-label="Menu" aria-expanded={open} aria-controls="mobile-navigation"><span key={String(open)} className="menu-icon">{open ? <X /> : <Menu />}</span></Button>
         </div>
       </div>
-      {open && (
-        <div className="md:hidden border-t bg-background">
-          <div className="container-x py-4 grid gap-1">
+        <div id="mobile-navigation" className="mobile-navigation md:hidden bg-background" data-open={open} inert={!open}>
+          <div className="overflow-hidden min-h-0">
+          <div className="container-x py-4 grid gap-1 border-t">
             {NAV.map((n) => (
               <Link key={n.label} to="/store" search={n.platform ? { platform: n.platform } : {}} onClick={() => setOpen(false)} className="rounded-lg px-3 py-3 text-sm hover:bg-surface">{n.label}</Link>
             ))}
@@ -72,14 +72,14 @@ export function Header() {
               <>
                 <Link to="/account" onClick={() => setOpen(false)} className="rounded-lg px-3 py-3 text-sm hover:bg-surface">My account</Link>
                 {isAdmin && <Link to="/admin" onClick={() => setOpen(false)} className="rounded-lg px-3 py-3 text-sm hover:bg-surface">Admin panel</Link>}
-                <button onClick={() => { setOpen(false); void signOut(); }} className="rounded-lg px-3 py-3 text-left text-sm hover:bg-surface">Sign out</button>
+                <Button variant="ghost" onClick={() => { setOpen(false); void signOut(); }} className="justify-start px-3 py-3 text-sm">Sign out</Button>
               </>
             ) : (
               <Link to="/login" onClick={() => setOpen(false)} className="rounded-lg px-3 py-3 text-sm hover:bg-surface">Sign in</Link>
             )}
           </div>
+          </div>
         </div>
-      )}
     </header>
   );
 }
@@ -122,7 +122,7 @@ export function Shell({ children }: { children: ReactNode }) {
 export function MorphReveal({ children }: { children: ReactNode }) {
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    if (consumeMorph(140) && ref.current) {
+    if (consumeMorph(140) && ref.current && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       ref.current.animate(
         [{ opacity: 0.45, transform: "translateY(16px) scale(0.99)" }, { opacity: 1, transform: "none" }],
         { duration: 480, easing: "cubic-bezier(0.22, 0.9, 0.26, 1)" },
@@ -138,6 +138,7 @@ export function Reveal({ children, className, delay = 0 }: { children: ReactNode
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) { setShown(true); return; }
     if (typeof IntersectionObserver === "undefined") { setShown(true); return; }
     const io = new IntersectionObserver((entries) => {
       if (entries.some((e) => e.isIntersecting)) { setShown(true); io.disconnect(); }

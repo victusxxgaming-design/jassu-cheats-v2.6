@@ -8,6 +8,7 @@ let curtain: HTMLDivElement | null = null;
 export function morphToPage(origin: HTMLElement, title: string, go: () => void): void {
   if (curtain) return; // a morph is already running
   if (typeof window === "undefined") { go(); return; }
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) { go(); return; }
 
   const r = origin.getBoundingClientRect();
   const vw = window.innerWidth;

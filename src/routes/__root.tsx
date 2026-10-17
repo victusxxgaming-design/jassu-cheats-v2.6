@@ -17,6 +17,7 @@ import { AuthProvider } from "@/lib/auth";
 import { Toaster } from "@/components/ui/sonner";
 import { Shell } from "@/components/site";
 import { Button } from "@/components/ui/button";
+import { SiteMotion } from "@/components/site-motion";
 
 function NotFoundComponent() {
   return (
@@ -94,7 +95,7 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <CartProvider>
-          <Outlet />
+          <SiteMotion><Outlet /></SiteMotion>
           <Toaster theme="dark" />
         </CartProvider>
       </AuthProvider>
