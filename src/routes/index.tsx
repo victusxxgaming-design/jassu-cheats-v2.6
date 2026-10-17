@@ -58,7 +58,7 @@ function Index() {
             const count = products.filter((p) => p.platform === o.id).length;
             return (
               <Reveal key={o.id} delay={i * 110} className="h-full">
-                <Link to="/store" search={{ platform: o.id }}
+                <Link to="/store" search={{ platform: o.id }} data-morph-skip
                   onClick={(e) => {
                     e.preventDefault();
                     morphToPage(e.currentTarget, o.title, () => nav({ to: "/store", search: { platform: o.id } }));
